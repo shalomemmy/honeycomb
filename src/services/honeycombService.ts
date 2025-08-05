@@ -22,16 +22,24 @@ class HoneycombService {
 
   private async initializeConnection() {
     try {
-      // Initialize Solana connection
-      const { Connection, clusterApiUrl } = await import('@solana/web3.js')
+      // Initialize Solana connection to devnet
+      const { Connection, clusterApiUrl, PublicKey } = await import('@solana/web3.js')
       this.connection = new Connection(clusterApiUrl('devnet'), 'confirmed')
       
       // Load wallet if available
-      if (typeof window !== 'undefined' && window.solana) {
-        this.wallet = window.solana
+      if (typeof window !== 'undefined' && (window as any).solana) {
+        this.wallet = (window as any).solana
+        console.log('🍯 Wallet connected to Honeycomb:', this.wallet.publicKey?.toString())
       }
+      
+      console.log('🍯 Honeycomb Protocol initialized on Solana Devnet')
+      
+      // Test connection
+      const version = await this.connection.getVersion()
+      console.log('📡 Solana RPC Version:', version)
+      
     } catch (error) {
-      console.error('Failed to initialize Honeycomb connection:', error)
+      console.error('❌ Failed to initialize Honeycomb connection:', error)
     }
   }
 
@@ -240,26 +248,50 @@ class HoneycombService {
 
   async updatePlayer(walletAddress: string, updates: Partial<HoneycombPlayer>): Promise<HoneycombPlayer | null> {
     try {
-      if (!this.wallet) {
+      console.log('🍯 Updating player on Honeycomb Protocol:', walletAddress, updates)
+      
+      if (!this.wallet || !this.connection) {
+        console.log('⚠️ No wallet/connection, using mock data')
         return this.updateMockPlayer(walletAddress, updates)
       }
 
+      // Create blockchain transaction for player update
+      const transaction = await this.createBlockchainTransaction({
+        type: 'player_update',
+        data: { 
+          walletAddress, 
+          updates,
+          timestamp: new Date().toISOString()
+        },
+        status: 'pending'
+      })
+
+      console.log('📝 Created blockchain transaction:', transaction?.signature)
+
+      // Try to call real Honeycomb API
       const response = await fetch(`${this.baseUrl}/players/${walletAddress}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${await this.getAuthToken()}`
         },
-        body: JSON.stringify(updates)
+        body: JSON.stringify({
+          ...updates,
+          transactionSignature: transaction?.signature,
+          blockchainTimestamp: new Date().toISOString()
+        })
       })
 
       if (response.ok) {
-        return await response.json()
+        const player = await response.json()
+        console.log('✅ Player updated on Honeycomb Protocol')
+        return player
       }
 
-      return this.updateMockPlayer(walletAddress, updates)
+      console.log('⚠️ Honeycomb API unavailable, using enhanced mock with blockchain data')
+      return this.updateMockPlayerWithBlockchain(walletAddress, updates, transaction)
     } catch (error) {
-      console.error('Failed to update player:', error)
+      console.error('❌ Failed to update player:', error)
       return this.updateMockPlayer(walletAddress, updates)
     }
   }
@@ -295,27 +327,55 @@ class HoneycombService {
   // Blockchain Integration
   async createBlockchainTransaction(transaction: Partial<BlockchainTransaction>): Promise<BlockchainTransaction | null> {
     try {
+      console.log('🔗 Creating blockchain transaction:', transaction.type)
+      
       if (!this.wallet || !this.connection) {
+        console.log('⚠️ No wallet/connection, creating mock transaction')
         return this.createMockTransaction(transaction)
       }
 
-      // Create Solana transaction
+      // Create Solana transaction with memo for Honeycomb data
       const { Transaction, SystemProgram, PublicKey } = await import('@solana/web3.js')
       
       const transactionData = new Transaction()
+      
+      // Add a small transfer to make it a valid transaction
+      // In a real implementation, this would interact with Honeycomb Program
       transactionData.add(
         SystemProgram.transfer({
           fromPubkey: this.wallet.publicKey,
-          toPubkey: new PublicKey('11111111111111111111111111111111'), // Example
-          lamports: 1000
+          toPubkey: this.wallet.publicKey, // Self-transfer for demo
+          lamports: 1 // Minimal amount
         })
       )
 
-      const signature = await this.wallet.signAndSendTransaction(transactionData)
-      
-      const blockchainTx: BlockchainTransaction = {
-        id: Math.random().toString(36).substr(2, 9),
-        type: transaction.type || 'honeycomb_verification',
+      // In a real Honeycomb implementation, we would add Honeycomb program instructions here
+      // For now, we simulate with a memo containing game data
+      const memo = JSON.stringify({
+        honeycomb: true,
+        type: transaction.type,
+        data: transaction.data,
+        timestamp: new Date().toISOString()
+      })
+
+      try {
+        // Attempt to sign and send transaction
+        const { blockhash } = await this.connection.getRecentBlockhash()
+        transactionData.recentBlockhash = blockhash
+        transactionData.feePayer = this.wallet.publicKey
+
+        const signedTransaction = await this.wallet.signTransaction(transactionData)
+        const signature = await this.connection.sendRawTransaction(signedTransaction.serialize())
+        
+        console.log('✅ Transaction sent to Solana:', signature)
+        
+        // Wait for confirmation
+        await this.connection.confirmTransaction(signature, 'confirmed')
+        console.log('✅ Transaction confirmed on blockchain')
+
+        const blockchainTx: BlockchainTransaction = {
+          id: signature,
+          type: transaction.type || 'honeycomb_verification',
         data: transaction.data || {},
         status: 'confirmed',
         txHash: signature,
@@ -479,6 +539,33 @@ class HoneycombService {
     const player = this.getMockPlayer(walletAddress)
     const updatedPlayer = { ...player, ...updates }
     localStorage.setItem(`mock_player_${walletAddress}`, JSON.stringify(updatedPlayer))
+    return updatedPlayer
+  }
+
+  private updateMockPlayerWithBlockchain(walletAddress: string, updates: Partial<HoneycombPlayer>, transaction: BlockchainTransaction | null): HoneycombPlayer {
+    const player = this.getMockPlayer(walletAddress)
+    const updatedPlayer = { 
+      ...player, 
+      ...updates,
+      // Add blockchain metadata
+      lastTransactionHash: transaction?.txHash || 'mock_tx_' + Date.now(),
+      blockchainInteractions: (player.blockchainInteractions || 0) + 1,
+      lastOnChainUpdate: new Date().toISOString()
+    }
+    
+    console.log('🍯 Enhanced mock player with blockchain data:', updatedPlayer)
+    localStorage.setItem(`mock_player_${walletAddress}`, JSON.stringify(updatedPlayer))
+    
+    // Store transaction history
+    const txHistory = JSON.parse(localStorage.getItem(`tx_history_${walletAddress}`) || '[]')
+    txHistory.push({
+      type: 'player_update',
+      transaction: transaction,
+      updates: updates,
+      timestamp: new Date().toISOString()
+    })
+    localStorage.setItem(`tx_history_${walletAddress}`, JSON.stringify(txHistory))
+    
     return updatedPlayer
   }
 

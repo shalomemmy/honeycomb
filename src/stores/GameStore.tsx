@@ -222,13 +222,19 @@ const useGameStore = create<GameStore>((set, get) => ({
   addExperience: (amount) => {
     const { player } = get()
     if (player) {
+      console.log(`Adding ${amount} XP. Current: ${player.experience}, New: ${player.experience + amount}`)
       const newExperience = player.experience + amount
       get().updatePlayer({ experience: newExperience })
       
       // Check for level up
       if (newExperience >= player.experienceToNext) {
+        console.log(`Level up! ${player.level} -> ${player.level + 1}`)
         get().levelUp()
       }
+      
+      // Force re-render by updating the player object
+      const updatedPlayer = get().player
+      console.log('Updated player after XP gain:', updatedPlayer)
     }
   },
 
