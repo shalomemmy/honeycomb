@@ -277,26 +277,45 @@ const WalletConnect: React.FC<WalletConnectProps> = ({ onConnect, onClose, isOpe
     setError('');
 
     try {
-      const response = await wallet.walletObject.connect();
-      
-      // Handle different wallet response formats
+      let response: any;
       let publicKey = '';
-      
-      if (response && response.publicKey) {
-        // Standard format (Phantom, etc.)
-        publicKey = typeof response.publicKey === 'string' 
-          ? response.publicKey 
-          : response.publicKey.toString();
-      } else if (wallet.walletObject.publicKey) {
-        // Some wallets store publicKey directly on wallet object after connection
-        publicKey = typeof wallet.walletObject.publicKey === 'string'
-          ? wallet.walletObject.publicKey
-          : wallet.walletObject.publicKey.toString();
-      } else if (response && typeof response === 'string') {
-        // Some wallets return publicKey directly as string
-        publicKey = response;
+
+      // Handle different wallet connection methods
+      if (wallet.identifier === 'metamask' || wallet.identifier === 'trustwallet' || wallet.identifier === 'coinbase') {
+        // Ethereum-based wallets
+        if (wallet.walletObject.request) {
+          // Request account access
+          const accounts = await wallet.walletObject.request({ 
+            method: 'eth_requestAccounts' 
+          });
+          if (accounts && accounts.length > 0) {
+            publicKey = accounts[0]; // Ethereum address
+          }
+        }
       } else {
-        throw new Error('Unable to retrieve public key from wallet');
+        // Solana wallets
+        if (wallet.walletObject.connect) {
+          response = await wallet.walletObject.connect();
+          
+          // Handle different Solana wallet response formats
+          if (response && response.publicKey) {
+            // Standard format (Phantom, etc.)
+            publicKey = typeof response.publicKey === 'string' 
+              ? response.publicKey 
+              : response.publicKey.toString();
+          } else if (wallet.walletObject.publicKey) {
+            // Some wallets store publicKey directly on wallet object after connection
+            publicKey = typeof wallet.walletObject.publicKey === 'string'
+              ? wallet.walletObject.publicKey
+              : wallet.walletObject.publicKey.toString();
+          }
+        } else {
+          throw new Error(`${wallet.name} does not support the connect method`);
+        }
+      }
+
+      if (!publicKey) {
+        throw new Error('Unable to retrieve public key/address from wallet');
       }
 
       onConnect({

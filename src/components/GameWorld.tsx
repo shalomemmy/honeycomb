@@ -18,24 +18,36 @@ const GameWorld: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false)
 
   const handleAction = (action: string) => {
+    if (!player) {
+      console.error('No player found - cannot perform action')
+      return
+    }
+
+    console.log('Starting action:', action, 'Current player:', player)
     setIsLoading(true)
     
     // Simulate action delay
     setTimeout(() => {
+      console.log('Executing action:', action)
       switch (action) {
         case 'explore':
+          console.log('Adding 10 XP for explore')
           addExperience(10)
           break
         case 'combat':
+          console.log('Adding 25 XP for combat')
           addExperience(25)
           break
         case 'craft':
+          console.log('Adding 15 XP for craft')
           addExperience(15)
           break
         case 'mission':
+          console.log('Adding 50 XP for mission')
           addExperience(50)
           break
       }
+      console.log('Action completed, stopping loading')
       setIsLoading(false)
     }, 1000)
   }
