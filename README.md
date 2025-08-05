@@ -506,6 +506,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Built with ❤️ for the future of gaming**
 
-[🎮 Start Playing](https://honeycomb-roan.vercel.app/) • [⭐ Star on GitHub](https://github.com/shalomemmy/honeycomb) • [🐦 Follow Updates](https://x.com/EmemDickso33872)
+[🎮 Start Playing](https://honeycomb-sigma.vercel.app/) • [⭐ Star on GitHub](https://github.com/shalomemmy/honeycomb) • [🐦 Follow Updates](https://x.com/EmemDickso33872)
 
 </div>
