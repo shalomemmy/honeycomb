@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useGame } from '@/stores/GameStore'
-import WalletConnect from './WalletConnect'
 import { 
   Gamepad2, 
   User, 
@@ -13,27 +12,15 @@ import {
   LogOut
 } from 'lucide-react'
 
-const Header: React.FC = () => {
-  const { player, initializePlayer } = useGame()
+interface HeaderProps {
+  connectedWallet: any
+  onConnectWallet: () => void
+  onDisconnectWallet: () => void
+}
+
+const Header: React.FC<HeaderProps> = ({ connectedWallet, onConnectWallet, onDisconnectWallet }) => {
+  const { player } = useGame()
   const location = useLocation()
-  const [showWalletConnect, setShowWalletConnect] = useState(false)
-  const [connectedWallet, setConnectedWallet] = useState<any>(null)
-
-  const handleWalletConnect = (wallet: any) => {
-    setConnectedWallet(wallet)
-    initializePlayer(wallet.publicKey)
-  }
-
-  const handleWalletDisconnect = async () => {
-    try {
-      if (connectedWallet?.walletObject?.disconnect) {
-        await connectedWallet.walletObject.disconnect()
-      }
-      setConnectedWallet(null)
-    } catch (error) {
-      console.error('Error disconnecting wallet:', error)
-    }
-  }
 
   const navItems = [
     { path: '/', label: '3D RPG', icon: Gamepad2 },
@@ -94,7 +81,7 @@ const Header: React.FC = () => {
             {/* Wallet Button */}
             {connectedWallet ? (
               <button
-                onClick={handleWalletDisconnect}
+                onClick={onDisconnectWallet}
                 className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
               >
                 <LogOut className="w-4 h-4" />
@@ -102,7 +89,7 @@ const Header: React.FC = () => {
               </button>
             ) : (
               <button
-                onClick={() => setShowWalletConnect(true)}
+                onClick={onConnectWallet}
                 className="flex items-center gap-2 bg-honeycomb-400 hover:bg-honeycomb-300 text-black px-4 py-2 rounded-lg transition-colors font-medium"
               >
                 <Wallet className="w-4 h-4" />
@@ -131,12 +118,6 @@ const Header: React.FC = () => {
         </nav>
       </div>
 
-      {/* Wallet Connect Modal */}
-      <WalletConnect
-        isOpen={showWalletConnect}
-        onClose={() => setShowWalletConnect(false)}
-        onConnect={handleWalletConnect}
-      />
     </header>
   )
 }

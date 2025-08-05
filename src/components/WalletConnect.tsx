@@ -169,12 +169,12 @@ const WalletConnect: React.FC<WalletConnectProps> = ({ onConnect, onClose, isOpe
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-gray-900 border border-gray-700 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 overflow-y-auto">
+      <div className="bg-gray-900 border border-gray-700 rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto m-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-700">
+        <div className="flex items-center justify-between p-4 border-b border-gray-700">
           <div>
-            <h2 className="text-2xl font-bold text-white">Connect Wallet</h2>
+            <h2 className="text-xl font-bold text-white">Connect Wallet</h2>
             <p className="text-gray-400 text-sm">Choose your preferred Solana wallet</p>
           </div>
           <button
@@ -187,34 +187,34 @@ const WalletConnect: React.FC<WalletConnectProps> = ({ onConnect, onClose, isOpe
 
         {/* Error Message */}
         {error && (
-          <div className="m-6 bg-red-900/50 border border-red-500/30 rounded-xl p-4">
+          <div className="m-4 bg-red-900/50 border border-red-500/30 rounded-xl p-3">
             <div className="flex items-center space-x-2">
-              <AlertCircle className="w-5 h-5 text-red-400" />
-              <span className="text-red-200">{error}</span>
+              <AlertCircle className="w-4 h-4 text-red-400" />
+              <span className="text-red-200 text-sm">{error}</span>
             </div>
           </div>
         )}
 
         {/* Wallet List */}
-        <div className="p-6">
+        <div className="p-4">
           {/* Installed Wallets */}
           {availableWallets.filter(w => w.isInstalled).length > 0 && (
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold text-green-400 mb-4">
+            <div className="mb-6">
+              <h3 className="text-base font-semibold text-green-400 mb-3">
                 ✅ Installed ({availableWallets.filter(w => w.isInstalled).length})
               </h3>
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {availableWallets.filter(w => w.isInstalled).map((wallet) => (
                   <button
                     key={wallet.identifier}
                     onClick={() => connectWallet(wallet)}
                     disabled={connecting}
-                    className="w-full flex items-center space-x-4 p-4 bg-gray-800/50 hover:bg-gray-700/50 border border-gray-600/30 hover:border-purple-500/50 rounded-xl transition-all duration-200 disabled:opacity-50"
+                    className="w-full flex items-center space-x-3 p-3 bg-gray-800/50 hover:bg-gray-700/50 border border-gray-600/30 hover:border-purple-500/50 rounded-lg transition-all duration-200 disabled:opacity-50"
                   >
-                    <div className="text-3xl">{wallet.icon}</div>
+                    <div className="text-2xl">{wallet.icon}</div>
                     <div className="text-left flex-1">
-                      <div className="text-white font-semibold">{wallet.name}</div>
-                      <div className="text-gray-400 text-sm">{wallet.description}</div>
+                      <div className="text-white font-medium">{wallet.name}</div>
+                      <div className="text-gray-400 text-xs">{wallet.description}</div>
                     </div>
                     {connecting && <div className="animate-spin text-white">⏳</div>}
                   </button>
@@ -226,22 +226,22 @@ const WalletConnect: React.FC<WalletConnectProps> = ({ onConnect, onClose, isOpe
           {/* Not Installed Wallets */}
           {availableWallets.filter(w => !w.isInstalled).length > 0 && (
             <div>
-              <h3 className="text-lg font-semibold text-orange-400 mb-4">
+              <h3 className="text-base font-semibold text-orange-400 mb-3">
                 📦 Not Installed ({availableWallets.filter(w => !w.isInstalled).length})
               </h3>
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {availableWallets.filter(w => !w.isInstalled).map((wallet) => (
                   <button
                     key={wallet.identifier}
                     onClick={() => connectWallet(wallet)}
-                    className="w-full flex items-center space-x-4 p-4 bg-gray-800/30 hover:bg-gray-700/30 border border-gray-600/30 hover:border-orange-500/50 rounded-xl transition-all duration-200"
+                    className="w-full flex items-center space-x-3 p-3 bg-gray-800/30 hover:bg-gray-700/30 border border-gray-600/30 hover:border-orange-500/50 rounded-lg transition-all duration-200"
                   >
-                    <div className="text-3xl opacity-60">{wallet.icon}</div>
+                    <div className="text-2xl opacity-60">{wallet.icon}</div>
                     <div className="text-left flex-1">
-                      <div className="text-white font-semibold">{wallet.name}</div>
-                      <div className="text-gray-400 text-sm">{wallet.description}</div>
+                      <div className="text-white font-medium">{wallet.name}</div>
+                      <div className="text-gray-400 text-xs">{wallet.description}</div>
                     </div>
-                    <ExternalLink className="w-5 h-5 text-orange-400" />
+                    <ExternalLink className="w-4 h-4 text-orange-400" />
                   </button>
                 ))}
               </div>
@@ -250,9 +250,9 @@ const WalletConnect: React.FC<WalletConnectProps> = ({ onConnect, onClose, isOpe
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-gray-700">
-          <div className="text-center text-sm text-gray-400">
-            <p className="mb-2">🔒 Secure connection • ⚡ Instant detection</p>
+        <div className="p-4 border-t border-gray-700">
+          <div className="text-center text-xs text-gray-400">
+            <p className="mb-1">🔒 Secure connection • ⚡ Instant detection</p>
             <p>If you don't see your wallet, make sure it's installed and refresh the page.</p>
           </div>
         </div>
