@@ -11,7 +11,7 @@
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 
-[🎮 Play Now](https://your-deployment-url.com) • [📖 Documentation](#documentation) • [🚀 Deploy](#deployment) • [🤝 Contributing](#contributing)
+[🎮 Play Now](https://honeycomb-sigma.vercel.app/) • [📖 Documentation](#documentation) • [🚀 Deploy](#deployment) • [🤝 Contributing](#contributing)
 
 </div>
 
