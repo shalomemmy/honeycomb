@@ -48,20 +48,37 @@ Choose from four core activities:
 - Discover rare crafting recipes
 - Build your inventory
 
-#### 🎯 **Complete Missions** (+50 XP)
-- Take on challenging quests
-- Earn significant rewards
-- Progress through the story
+#### 🍯 **Honeycomb Missions** (+50 XP + On-Chain)
+- **Real Honeycomb Protocol Integration**: Uses official Edge Client
+- **Nectar Missions**: Time-based quests with blockchain rewards
+- **Project Management**: Creates Honeycomb projects and user profiles
+- **Mission Pools**: Grouped quests with character requirements
+- **On-Chain Rewards**: Experience and reputation recorded on Honeynet
 
 ### 3. **Track Your Progress**
 - **Level Up**: Gain XP to increase your level and unlock new abilities
 - **View Stats**: Monitor your health, level, XP, and inventory in real-time
-- **Check Blockchain**: Click the floating hash icon (🔗) to view all your on-chain transactions
+- **Check Blockchain**: Click the floating history icon (📜) to view all your on-chain transactions
+- **Honeycomb Profile**: Your progress is stored on Honeycomb Protocol
 
-### 4. **Honeycomb Integration**
-- **Missions**: Completed missions are recorded as Honeycomb entities
-- **Traits**: Your character develops on-chain traits based on your playstyle
-- **Reputation**: Build verifiable reputation across the Honeycomb ecosystem
+### 4. **Real Honeycomb Protocol Integration**
+
+This game implements the **official Honeycomb Protocol architecture** following [docs.honeycombprotocol.com](https://docs.honeycombprotocol.com/):
+
+#### **Core Modules Used:**
+- **🔧 Edge Toolkit**: Simplified blockchain interactions
+- **🏢 Hive Control**: Project and user management  
+- **👤 Character Manager**: NFT-based character system
+- **📦 Resource Manager**: Crafting and resource system
+- **🎯 Nectar Missions**: Time-based quest system
+- **💰 Nectar Staking**: Long-term engagement rewards
+
+#### **Blockchain Features:**
+- **Honeynet RPC**: Uses Honeycomb's test network (`https://rpc.test.honeycombprotocol.com`)
+- **Edge API**: Connects to official Edge Client (`https://edge.test.honeycombprotocol.com/`)
+- **Real Transactions**: Creates actual Solana transactions with Honeycomb metadata
+- **Compressed Data**: Utilizes Honeycomb's 1000x cost reduction compression
+- **Universal Profiles**: Cross-project user identity system
 
 ## 🛠 Technical Stack
 

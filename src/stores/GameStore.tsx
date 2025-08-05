@@ -490,6 +490,9 @@ const useGameStore = create<GameStore>((set, get) => ({
 
       console.log('🍯 Syncing with Honeycomb Protocol...')
       
+      // Create user profile if first time
+      await honeycombService.createUserProfile(player.walletAddress)
+      
       // Update player on Honeycomb Protocol (creates blockchain transaction)
       const updatedPlayer = await honeycombService.updatePlayer(player.walletAddress, {
         level: player.level,
@@ -503,7 +506,7 @@ const useGameStore = create<GameStore>((set, get) => ({
         console.log('✅ Player updated on Honeycomb Protocol')
       }
 
-      // Also sync existing data
+      // Sync existing data including missions
       const honeycombEntity = await honeycombService.syncPlayerData(player)
       
       if (honeycombEntity) {
@@ -519,6 +522,64 @@ const useGameStore = create<GameStore>((set, get) => ({
       }
     } catch (error) {
       console.error('Failed to sync with Honeycomb:', error)
+    }
+  },
+
+  // Create Honeycomb missions
+  createHoneycombMission: async (missionData: any) => {
+    try {
+      console.log('🍯 Creating Honeycomb mission:', missionData)
+      const mission = await honeycombService.createMission(missionData)
+      
+      if (mission) {
+        console.log('✅ Honeycomb mission created:', mission.name)
+        
+        // Update game state with new mission
+        const { gameState } = get()
+        set({
+          gameState: {
+            ...gameState,
+            missions: [...(gameState.missions || []), mission]
+          }
+        })
+      }
+      
+      return mission
+    } catch (error) {
+      console.error('Failed to create Honeycomb mission:', error)
+      return null
+    }
+  },
+
+  // Start a Honeycomb mission
+  startHoneycombMission: async (missionId: string) => {
+    try {
+      const { player } = get()
+      if (!player?.walletAddress) return false
+      
+      console.log('🍯 Starting Honeycomb mission:', missionId)
+      const success = await honeycombService.startMission(player.walletAddress, missionId)
+      
+      if (success) {
+        console.log('✅ Honeycomb mission started successfully')
+        
+        // Add experience for starting the mission
+        get().addExperience(25)
+        
+        // Show notification
+        get().addNotification({
+          id: `mission_start_${Date.now()}`,
+          type: 'success',
+          title: 'Mission Started!',
+          message: 'Your character has begun the quest on Honeycomb Protocol',
+          timestamp: new Date()
+        })
+      }
+      
+      return success
+    } catch (error) {
+      console.error('Failed to start Honeycomb mission:', error)
+      return false
     }
   },
 

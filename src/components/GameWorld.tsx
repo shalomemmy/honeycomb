@@ -15,10 +15,11 @@ import {
 } from 'lucide-react'
 
 const GameWorld: React.FC = () => {
-  const { player, addExperience, addItem } = useGame()
+  const { player, addExperience, addItem, createHoneycombMission, startHoneycombMission, gameState } = useGame()
   const [isLoading, setIsLoading] = useState(false)
+  const [showMissions, setShowMissions] = useState(false)
 
-  const handleAction = (action: string) => {
+  const handleAction = async (action: string) => {
     if (!player) {
       console.error('No player found - cannot perform action')
       return
@@ -26,8 +27,7 @@ const GameWorld: React.FC = () => {
 
     setIsLoading(true)
     
-    // Simulate action delay
-    setTimeout(() => {
+    try {
       switch (action) {
         case 'explore':
           addExperience(10)
@@ -39,11 +39,46 @@ const GameWorld: React.FC = () => {
           addExperience(15)
           break
         case 'mission':
-          addExperience(50)
+          // Create and start a Honeycomb mission
+          await handleHoneycombMission()
           break
       }
-      setIsLoading(false)
-    }, 1000)
+    } catch (error) {
+      console.error('Action failed:', error)
+    } finally {
+      setTimeout(() => setIsLoading(false), 1000)
+    }
+  }
+
+  const handleHoneycombMission = async () => {
+    try {
+      // Create a new Honeycomb mission
+      const missionData = {
+        name: `Quest ${Date.now()}`,
+        description: 'Complete this Honeycomb Protocol quest for rewards',
+        type: 'exploration',
+        duration: 3600, // 1 hour
+        requirements: { level: player?.level || 1 },
+        rewards: { experience: 50, reputation: 10 }
+      }
+
+      console.log('🍯 Creating Honeycomb mission...')
+      const mission = await createHoneycombMission(missionData)
+      
+      if (mission) {
+        console.log('🍯 Starting Honeycomb mission...')
+        const success = await startHoneycombMission(mission.id)
+        
+        if (success) {
+          addExperience(50)
+          console.log('✅ Honeycomb mission completed successfully!')
+        }
+      }
+    } catch (error) {
+      console.error('Failed to handle Honeycomb mission:', error)
+      // Fallback to regular XP gain
+      addExperience(50)
+    }
   }
 
   if (!player) {
@@ -171,14 +206,17 @@ const GameWorld: React.FC = () => {
             </div>
 
             <div 
-              className={`bg-black/30 backdrop-blur-sm rounded-lg p-6 border border-white/20 cursor-pointer transition-all hover:bg-black/50 hover:scale-105 ${isLoading ? 'opacity-50' : ''}`}
+              className={`bg-black/30 backdrop-blur-sm rounded-lg p-6 border border-white/20 cursor-pointer transition-all hover:bg-black/50 hover:scale-105 ${isLoading ? 'opacity-50' : ''} relative`}
               onClick={() => handleAction('mission')}
             >
               <div className="text-center">
                 <Trophy className="w-12 h-12 mx-auto mb-4 text-purple-400" />
-                <h3 className="text-lg font-bold mb-2">Complete Mission</h3>
-                <p className="text-sm text-gray-300">Finish Honeycomb missions</p>
-                <div className="mt-4 text-xs text-purple-400">+50 XP</div>
+                <h3 className="text-lg font-bold mb-2">Honeycomb Mission</h3>
+                <p className="text-sm text-gray-300">On-chain quests with real rewards</p>
+                <div className="mt-4 text-xs text-purple-400">+50 XP + Blockchain</div>
+                <div className="absolute top-2 right-2 text-xs bg-honeycomb-400 text-black px-2 py-1 rounded-full">
+                  🍯
+                </div>
               </div>
             </div>
           </div>
