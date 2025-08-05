@@ -12,7 +12,7 @@ const WalletConnect: React.FC<WalletConnectProps> = ({ onConnect, onClose, isOpe
   const [connecting, setConnecting] = useState(false);
   const [error, setError] = useState('');
 
-  // Define known Solana wallets with their properties
+  // Define known crypto wallets with their properties (Solana + Multi-chain)
   const knownWallets = [
     {
       name: 'Phantom',
@@ -55,6 +55,69 @@ const WalletConnect: React.FC<WalletConnectProps> = ({ onConnect, onClose, isOpe
       identifier: 'sollet',
       downloadUrl: 'https://www.sollet.io/',
       description: 'Browser extension wallet'
+    },
+    {
+      name: 'MetaMask',
+      icon: '🦊',
+      identifier: 'metamask',
+      downloadUrl: 'https://metamask.io/',
+      description: 'Popular Ethereum & multi-chain wallet'
+    },
+    {
+      name: 'Trust Wallet',
+      icon: '🛡️',
+      identifier: 'trustwallet',
+      downloadUrl: 'https://trustwallet.com/',
+      description: 'Mobile & desktop crypto wallet'
+    },
+    {
+      name: 'Coinbase Wallet',
+      icon: '🔵',
+      identifier: 'coinbase',
+      downloadUrl: 'https://wallet.coinbase.com/',
+      description: 'Coinbase self-custody wallet'
+    },
+    {
+      name: 'Coin98',
+      icon: '💰',
+      identifier: 'coin98',
+      downloadUrl: 'https://coin98.com/',
+      description: 'Multi-chain DeFi wallet'
+    },
+    {
+      name: 'Exodus',
+      icon: '🚀',
+      identifier: 'exodus',
+      downloadUrl: 'https://www.exodus.com/',
+      description: 'Beautiful multi-currency wallet'
+    },
+    {
+      name: 'Torus',
+      icon: '🌐',
+      identifier: 'torus',
+      downloadUrl: 'https://tor.us/',
+      description: 'Social login wallet'
+    },
+    {
+      name: 'MathWallet',
+      icon: '🧮',
+      identifier: 'mathwallet',
+      downloadUrl: 'https://mathwallet.org/',
+      description: 'Multi-platform crypto wallet'
+    },
+    {
+      name: 'Clover',
+      icon: '🍀',
+      identifier: 'clover',
+      downloadUrl: 'https://clv.org/',
+      description: 'Cross-chain wallet'
+    },
+    {
+      name: 'Brave Wallet',
+      icon: '🦁',
+      identifier: 'brave',
+      downloadUrl: 'https://brave.com/wallet/',
+      description: 'Built into Brave browser'
     }
   ];
 
@@ -121,6 +184,66 @@ const WalletConnect: React.FC<WalletConnectProps> = ({ onConnect, onClose, isOpe
           if ((window as any).sollet) {
             isAvailable = true;
             walletObject = (window as any).sollet;
+          }
+          break;
+        case 'metamask':
+          if ((window as any).ethereum?.isMetaMask) {
+            isAvailable = true;
+            walletObject = (window as any).ethereum;
+          }
+          break;
+        case 'trustwallet':
+          if ((window as any).trustwallet?.solana) {
+            isAvailable = true;
+            walletObject = (window as any).trustwallet.solana;
+          } else if ((window as any).ethereum?.isTrust) {
+            isAvailable = true;
+            walletObject = (window as any).ethereum;
+          }
+          break;
+        case 'coinbase':
+          if ((window as any).coinbaseSolana) {
+            isAvailable = true;
+            walletObject = (window as any).coinbaseSolana;
+          } else if ((window as any).ethereum?.isCoinbaseWallet) {
+            isAvailable = true;
+            walletObject = (window as any).ethereum;
+          }
+          break;
+        case 'coin98':
+          if ((window as any).coin98?.sol) {
+            isAvailable = true;
+            walletObject = (window as any).coin98.sol;
+          }
+          break;
+        case 'exodus':
+          if ((window as any).exodus?.solana) {
+            isAvailable = true;
+            walletObject = (window as any).exodus.solana;
+          }
+          break;
+        case 'torus':
+          if ((window as any).torus) {
+            isAvailable = true;
+            walletObject = (window as any).torus;
+          }
+          break;
+        case 'mathwallet':
+          if ((window as any).solana?.isMathWallet) {
+            isAvailable = true;
+            walletObject = (window as any).solana;
+          }
+          break;
+        case 'clover':
+          if ((window as any).clover?.solana) {
+            isAvailable = true;
+            walletObject = (window as any).clover.solana;
+          }
+          break;
+        case 'brave':
+          if ((window as any).solana?.isBraveWallet) {
+            isAvailable = true;
+            walletObject = (window as any).solana;
           }
           break;
       }
