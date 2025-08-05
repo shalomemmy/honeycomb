@@ -346,14 +346,14 @@ npm run type-check
    RUN npm install
    COPY . .
    RUN npm run build
-   EXPOSE 5173
+   EXPOSE 3000
    CMD ["npm", "run", "preview"]
    ```
 
 2. **🏗️ Build & Run**
    ```bash
    docker build -t honeycomb-rpg .
-   docker run -p 5173:5173 honeycomb-rpg
+   docker run -p 3000:3000 honeycomb-rpg
    ```
 
 ---
