@@ -94,6 +94,9 @@ const WalletConnect: React.FC<WalletConnectProps> = ({ onConnect, onClose, isOpe
           if ((window as any).solflare?.isSolflare) {
             isAvailable = true;
             walletObject = (window as any).solflare;
+          } else if ((window as any).solana?.isSolflare) {
+            isAvailable = true;
+            walletObject = (window as any).solana;
           }
           break;
         case 'backpack':
@@ -152,14 +155,36 @@ const WalletConnect: React.FC<WalletConnectProps> = ({ onConnect, onClose, isOpe
 
     try {
       const response = await wallet.walletObject.connect();
+      
+      // Handle different wallet response formats
+      let publicKey = '';
+      
+      if (response && response.publicKey) {
+        // Standard format (Phantom, etc.)
+        publicKey = typeof response.publicKey === 'string' 
+          ? response.publicKey 
+          : response.publicKey.toString();
+      } else if (wallet.walletObject.publicKey) {
+        // Some wallets store publicKey directly on wallet object after connection
+        publicKey = typeof wallet.walletObject.publicKey === 'string'
+          ? wallet.walletObject.publicKey
+          : wallet.walletObject.publicKey.toString();
+      } else if (response && typeof response === 'string') {
+        // Some wallets return publicKey directly as string
+        publicKey = response;
+      } else {
+        throw new Error('Unable to retrieve public key from wallet');
+      }
+
       onConnect({
         name: wallet.name,
-        publicKey: response.publicKey.toString(),
+        publicKey: publicKey,
         icon: wallet.icon,
         walletObject: wallet.walletObject
       });
       onClose();
     } catch (err: any) {
+      console.error(`Wallet connection error for ${wallet.name}:`, err);
       setError(`Failed to connect to ${wallet.name}: ${err.message}`);
     } finally {
       setConnecting(false);
