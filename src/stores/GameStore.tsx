@@ -590,15 +590,6 @@ const useGameStore = create<GameStore>((set, get) => ({
       console.error('Failed to verify on-chain action:', error)
       return false
     }
-  },
-
-  createHoneycombMission: async (missionData) => {
-    try {
-      return await honeycombService.createMission(missionData)
-    } catch (error) {
-      console.error('Failed to create Honeycomb mission:', error)
-      return null
-    }
   }
 }))
 
