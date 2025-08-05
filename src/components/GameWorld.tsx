@@ -97,10 +97,9 @@ const GameWorld: React.FC = () => {
               This advanced 2D RPG features:
             </p>
             <ul className="text-sm text-gray-300 mt-2 space-y-1">
-              <li>• Real-time 2D world with physics</li>
+              <li>•</li>
               <li>• Honeycomb Protocol integration</li>
               <li>• On-chain missions and traits</li>
-              <li>• Advanced combat system</li>
               <li>• Skill and progression trees</li>
             </ul>
           </div>
