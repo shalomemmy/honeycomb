@@ -192,10 +192,14 @@ const useGameStore = create<GameStore>((set, get) => ({
     const { player } = get()
     if (player) {
       const updatedPlayer = { ...player, ...updates }
+      console.log('Updating player:', updatedPlayer)
       set({ player: updatedPlayer })
       
-      // Save to localStorage
+      // Save to localStorage and trigger Honeycomb sync
       localStorage.setItem(`player_${player.walletAddress}`, JSON.stringify(updatedPlayer))
+      
+      // Sync with Honeycomb Protocol (real blockchain integration)
+      get().syncWithHoneycomb()
     }
   },
 
@@ -222,19 +226,15 @@ const useGameStore = create<GameStore>((set, get) => ({
   addExperience: (amount) => {
     const { player } = get()
     if (player) {
-      console.log(`Adding ${amount} XP. Current: ${player.experience}, New: ${player.experience + amount}`)
+      console.log(`🎯 Adding ${amount} XP to player. Current: ${player.experience}`)
       const newExperience = player.experience + amount
       get().updatePlayer({ experience: newExperience })
       
       // Check for level up
       if (newExperience >= player.experienceToNext) {
-        console.log(`Level up! ${player.level} -> ${player.level + 1}`)
+        console.log(`🎉 Level up! ${player.level} -> ${player.level + 1}`)
         get().levelUp()
       }
-      
-      // Force re-render by updating the player object
-      const updatedPlayer = get().player
-      console.log('Updated player after XP gain:', updatedPlayer)
     }
   },
 
@@ -488,6 +488,22 @@ const useGameStore = create<GameStore>((set, get) => ({
       const { player } = get()
       if (!player?.walletAddress) return
 
+      console.log('🍯 Syncing with Honeycomb Protocol...')
+      
+      // Update player on Honeycomb Protocol (creates blockchain transaction)
+      const updatedPlayer = await honeycombService.updatePlayer(player.walletAddress, {
+        level: player.level,
+        experience: player.experience,
+        health: player.health,
+        reputation: player.reputation,
+        lastActive: new Date().toISOString()
+      })
+
+      if (updatedPlayer) {
+        console.log('✅ Player updated on Honeycomb Protocol')
+      }
+
+      // Also sync existing data
       const honeycombEntity = await honeycombService.syncPlayerData(player)
       
       if (honeycombEntity) {

@@ -4,6 +4,7 @@ import { GameProvider, useGame } from './stores/GameStore'
 import Header from './components/Header'
 import GameWorld from './components/GameWorld'
 import WalletConnect from './components/WalletConnect'
+import { honeycombService } from './services/honeycombService'
 import './App.css'
 
 function AppContent() {
@@ -13,6 +14,10 @@ function AppContent() {
 
   const handleWalletConnect = (wallet: any) => {
     setConnectedWallet(wallet)
+    
+    // Set wallet on honeycomb service for blockchain transactions
+    honeycombService.setWallet(wallet.walletObject)
+    
     initializePlayer(wallet.publicKey)
     setShowWalletConnect(false)
   }

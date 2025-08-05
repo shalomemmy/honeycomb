@@ -20,6 +20,12 @@ class HoneycombService {
     this.initializeConnection()
   }
 
+  // Set wallet after connection
+  setWallet(wallet: any) {
+    this.wallet = wallet
+    console.log('🍯 Wallet set for Honeycomb service:', wallet?.publicKey?.toString())
+  }
+
   private async initializeConnection() {
     try {
       // Initialize Solana connection to devnet
