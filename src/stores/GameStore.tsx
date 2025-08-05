@@ -540,7 +540,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
     
     loadPlayerData()
-  }, [store])
+  }, []) // Empty dependency array - only run once on mount
   
   return (
     <GameContext.Provider value={store}>
