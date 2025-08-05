@@ -1,28 +1,39 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { useWallet } from '@solana/wallet-adapter-react'
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import { useGame } from '@/stores/GameStore'
+import WalletConnect from './WalletConnect'
 import { 
   Gamepad2, 
   User, 
   Trophy, 
   Crown,
   Sparkles,
-  Settings
+  Settings,
+  Wallet,
+  LogOut
 } from 'lucide-react'
 
 const Header: React.FC = () => {
-  const { publicKey } = useWallet()
   const { player, initializePlayer } = useGame()
   const location = useLocation()
+  const [showWalletConnect, setShowWalletConnect] = useState(false)
+  const [connectedWallet, setConnectedWallet] = useState<any>(null)
 
-  // Initialize player when wallet connects
-  React.useEffect(() => {
-    if (publicKey && !player) {
-      initializePlayer(publicKey.toString())
+  const handleWalletConnect = (wallet: any) => {
+    setConnectedWallet(wallet)
+    initializePlayer(wallet.publicKey)
+  }
+
+  const handleWalletDisconnect = async () => {
+    try {
+      if (connectedWallet?.walletObject?.disconnect) {
+        await connectedWallet.walletObject.disconnect()
+      }
+      setConnectedWallet(null)
+    } catch (error) {
+      console.error('Error disconnecting wallet:', error)
     }
-  }, [publicKey, player, initializePlayer])
+  }
 
   const navItems = [
     { path: '/', label: '3D RPG', icon: Gamepad2 },
@@ -63,7 +74,7 @@ const Header: React.FC = () => {
           {/* Player Stats & Wallet */}
           <div className="flex items-center gap-4">
             {/* Player Stats */}
-            {player && (
+            {player && connectedWallet && (
               <div className="hidden lg:flex items-center gap-4 text-sm">
                 <div className="flex items-center gap-1">
                   <Crown className="w-4 h-4 text-yellow-400" />
@@ -73,14 +84,31 @@ const Header: React.FC = () => {
                   <Sparkles className="w-4 h-4 text-purple-400" />
                   <span className="text-white font-medium">{player.inventory.length}</span>
                 </div>
-                <div className="text-gray-400">
-                  {player.walletAddress.slice(0, 6)}...{player.walletAddress.slice(-4)}
+                <div className="flex items-center gap-2 text-gray-400">
+                  <span className="text-xl">{connectedWallet.icon}</span>
+                  <span>{connectedWallet.publicKey.slice(0, 6)}...{connectedWallet.publicKey.slice(-4)}</span>
                 </div>
               </div>
             )}
 
             {/* Wallet Button */}
-            <WalletMultiButton className="bg-honeycomb-400 text-black hover:bg-honeycomb-300 transition-colors" />
+            {connectedWallet ? (
+              <button
+                onClick={handleWalletDisconnect}
+                className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                Disconnect
+              </button>
+            ) : (
+              <button
+                onClick={() => setShowWalletConnect(true)}
+                className="flex items-center gap-2 bg-honeycomb-400 hover:bg-honeycomb-300 text-black px-4 py-2 rounded-lg transition-colors font-medium"
+              >
+                <Wallet className="w-4 h-4" />
+                Connect Wallet
+              </button>
+            )}
           </div>
         </div>
 
@@ -102,6 +130,13 @@ const Header: React.FC = () => {
           ))}
         </nav>
       </div>
+
+      {/* Wallet Connect Modal */}
+      <WalletConnect
+        isOpen={showWalletConnect}
+        onClose={() => setShowWalletConnect(false)}
+        onConnect={handleWalletConnect}
+      />
     </header>
   )
 }

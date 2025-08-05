@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useWallet } from '@solana/wallet-adapter-react'
 import { useGame } from '@/stores/GameStore'
 import { 
   Gamepad2, 
@@ -15,16 +14,8 @@ import {
 } from 'lucide-react'
 
 const GameWorld: React.FC = () => {
-  const { publicKey } = useWallet()
-  const { player, initializePlayer, addExperience, addItem } = useGame()
+  const { player, addExperience, addItem } = useGame()
   const [isLoading, setIsLoading] = useState(false)
-
-  // Initialize player when wallet connects
-  React.useEffect(() => {
-    if (publicKey && !player) {
-      initializePlayer(publicKey.toString())
-    }
-  }, [publicKey, player, initializePlayer])
 
   const handleAction = (action: string) => {
     setIsLoading(true)
@@ -49,7 +40,7 @@ const GameWorld: React.FC = () => {
     }, 1000)
   }
 
-  if (!publicKey) {
+  if (!player) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
@@ -73,16 +64,7 @@ const GameWorld: React.FC = () => {
     )
   }
 
-  if (!player) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center">
-          <div className="animate-spin text-4xl mb-4">🍯</div>
-          <p className="text-gray-300">Initializing your character...</p>
-        </div>
-      </div>
-    )
-  }
+
 
   return (
     <div className="h-full relative overflow-hidden">
