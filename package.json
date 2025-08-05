@@ -1,0 +1,42 @@
+{
+  "name": "honeycomb-quest",
+  "version": "1.0.0",
+  "description": "Honeycomb Quest: The Digital Alchemist - A web-based RPG powered by Honeycomb Protocol",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "jest"
+  },
+  "keywords": ["honeycomb", "game", "rpg", "blockchain", "solana"],
+  "author": "Digital Alchemist Team",
+  "license": "MIT",
+  "dependencies": {
+    "three": "^0.158.0",
+    "@solana/web3.js": "^1.87.6",
+    "@solana/wallet-adapter-react": "^0.15.35",
+    "@solana/wallet-adapter-react-ui": "^0.9.34",
+    "@solana/wallet-adapter-base": "^0.9.23",
+    "@solana/wallet-adapter-wallets": "^0.19.23",
+    "@project-serum/anchor": "^0.26.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.8.1",
+    "framer-motion": "^10.16.4",
+    "zustand": "^4.4.6",
+    "axios": "^1.6.0",
+    "lucide-react": "^0.292.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.158.3",
+    "@vitejs/plugin-react": "^4.1.1",
+    "vite": "^4.5.0",
+    "typescript": "^5.2.2",
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "tailwindcss": "^3.3.5",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31"
+  }
+} 

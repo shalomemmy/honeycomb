@@ -1,0 +1,90 @@
+/* Fallback styles */
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #1f2937 0%, #7c3aed 50%, #1f2937 100%);
+  color: white;
+  min-height: 100vh;
+}
+
+.game-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1f2937 0%, #7c3aed 50%, #1f2937 100%);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #f8b54d, #e36a05);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #f59e20, #bc5208);
+}
+
+/* Game-specific animations */
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+.sparkle {
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes brewing {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(5deg); }
+  75% { transform: rotate(-5deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.brewing {
+  animation: brewing 3s ease-in-out infinite;
+}
+
+/* Element effects */
+.element-fire:hover {
+  box-shadow: 0 0 20px rgba(255, 68, 68, 0.6);
+}
+
+.element-water:hover {
+  box-shadow: 0 0 20px rgba(68, 68, 255, 0.6);
+}
+
+.element-earth:hover {
+  box-shadow: 0 0 20px rgba(68, 255, 68, 0.6);
+}
+
+.element-air:hover {
+  box-shadow: 0 0 20px rgba(255, 255, 68, 0.6);
+}
+
+/* Crafting effects */
+.crafting-success {
+  animation: success-pulse 1s ease-in-out;
+}
+
+@keyframes success-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.crafting-failure {
+  animation: failure-shake 0.5s ease-in-out;
+}
+
+@keyframes failure-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+} 
