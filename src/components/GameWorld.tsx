@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useGame } from '@/stores/GameStore'
+import BlockchainHistory from './BlockchainHistory'
 import { 
   Gamepad2, 
   Sword, 
@@ -201,6 +202,9 @@ const GameWorld: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Blockchain History Component */}
+      <BlockchainHistory />
     </div>
   )
 }
