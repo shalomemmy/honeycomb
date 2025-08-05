@@ -2,71 +2,101 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Fallback styles */
-* {
+/* Global styles */
+body {
   margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #1f2937 0%, #7c3aed 50%, #1f2937 100%);
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+/* Game container */
+.game-container {
+  min-height: 100vh;
   background: linear-gradient(135deg, #1f2937 0%, #7c3aed 50%, #1f2937 100%);
   color: white;
-  min-height: 100vh;
 }
 
-@layer base {
-  body {
-    @apply bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  }
+/* Custom gradients */
+.bg-gradient-honeycomb {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #92400e 100%);
 }
 
-@layer components {
-  .game-container {
-    @apply min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900;
-  }
-  
-  .honeycomb-gradient {
-    @apply bg-gradient-to-r from-honeycomb-400 to-honeycomb-600;
-  }
-  
-  .element-fire {
-    @apply bg-gradient-to-r from-red-500 to-orange-500;
-  }
-  
-  .element-water {
-    @apply bg-gradient-to-r from-blue-500 to-cyan-500;
-  }
-  
-  .element-earth {
-    @apply bg-gradient-to-r from-green-500 to-emerald-500;
-  }
-  
-  .element-air {
-    @apply bg-gradient-to-r from-yellow-400 to-yellow-300;
-  }
-  
-  .crafting-potion {
-    @apply relative overflow-hidden rounded-lg border-2 border-honeycomb-300 bg-black/20 backdrop-blur-sm;
-  }
-  
-  .floating-animation {
-    animation: float 6s ease-in-out infinite;
-  }
-  
-  @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
-  }
-  
-  .pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite alternate;
-  }
-  
-  @keyframes pulse-glow {
-    from { box-shadow: 0 0 20px rgba(248, 181, 77, 0.4); }
-    to { box-shadow: 0 0 40px rgba(248, 181, 77, 0.8); }
-  }
+.bg-gradient-elemental {
+  background: linear-gradient(135deg, #ef4444 0%, #3b82f6 50%, #10b981 100%);
+}
+
+/* Element colors */
+.element-fire {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.element-water {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.element-earth {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.element-air {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(139, 69, 19, 0.5); }
+  50% { box-shadow: 0 0 30px rgba(139, 69, 19, 0.8); }
+}
+
+/* Wallet adapter z-index fixes */
+.wallet-adapter-button,
+.wallet-adapter-modal,
+.wallet-adapter-dropdown,
+.wallet-adapter-modal-wrapper,
+.wallet-adapter-dropdown-list,
+.wallet-adapter-button-trigger,
+.wallet-adapter-button-dropdown {
+  z-index: 10000 !important;
+  position: relative !important;
+}
+
+/* Ensure wallet components are always on top */
+[class*="wallet-adapter"] {
+  z-index: 10000 !important;
+}
+
+/* Specific wallet adapter fixes */
+.wallet-adapter-react-ui {
+  z-index: 10000 !important;
+}
+
+.wallet-adapter-modal-overlay {
+  z-index: 9999 !important;
+}
+
+.wallet-adapter-modal-container {
+  z-index: 10000 !important;
+}
+
+/* Fix for dropdown positioning */
+.wallet-adapter-button-dropdown {
+  position: absolute !important;
+  z-index: 10001 !important;
+}
+
+/* Ensure proper stacking context */
+.wallet-adapter-button {
+  position: relative !important;
+  z-index: 1000 !important;
 } 

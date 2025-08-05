@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from 'react'
+import React, { createContext, useContext, ReactNode, useEffect } from 'react'
 import { create } from 'zustand'
 import { 
   GameState, 
@@ -32,6 +32,7 @@ interface GameStore extends GameState {
   clearNotifications: () => void
   updateTrait: (traitId: string, updates: Partial<PlayerTrait>) => void
   syncWithHoneycomb: () => Promise<void>
+  initializePlayer: (walletAddress: string) => void
 }
 
 const useGameStore = create<GameStore>((set, get) => ({
@@ -45,37 +46,128 @@ const useGameStore = create<GameStore>((set, get) => ({
   marketplace: [],
   notifications: [],
 
+  // Initialize player when wallet connects
+  initializePlayer: (walletAddress: string) => {
+    const existingPlayer = get().player
+    
+    if (!existingPlayer) {
+      // Create new player
+      const newPlayer: Player = {
+        id: generateId(),
+        walletAddress,
+        name: `Alchemist ${walletAddress.slice(0, 6)}`,
+        level: 1,
+        experience: 0,
+        experienceToNext: 100,
+        traits: [
+          {
+            id: generateId(),
+            type: 'fire_master',
+            name: 'Fire Master',
+            description: 'Increased success rate with fire element crafting',
+            level: 1,
+            maxLevel: 10,
+            bonus: 5,
+            requirements: []
+          },
+          {
+            id: generateId(),
+            type: 'water_sage',
+            name: 'Water Sage',
+            description: 'Increased success rate with water element crafting',
+            level: 1,
+            maxLevel: 10,
+            bonus: 5,
+            requirements: []
+          },
+          {
+            id: generateId(),
+            type: 'earth_guardian',
+            name: 'Earth Guardian',
+            description: 'Increased success rate with earth element crafting',
+            level: 1,
+            maxLevel: 10,
+            bonus: 5,
+            requirements: []
+          },
+          {
+            id: generateId(),
+            type: 'air_walker',
+            name: 'Air Walker',
+            description: 'Increased success rate with air element crafting',
+            level: 1,
+            maxLevel: 10,
+            bonus: 5,
+            requirements: []
+          }
+        ],
+        artifacts: [],
+        missions: [
+          {
+            id: generateId(),
+            type: 'daily_crafting',
+            title: 'First Steps',
+            description: 'Craft your first artifact',
+            requirements: ['craft_artifact'],
+            rewards: { xp: 50, artifacts: [], traits: [] },
+            progress: 0,
+            maxProgress: 1,
+            completed: false
+          }
+        ],
+        reputation: 0
+      }
+      
+      set({ player: newPlayer })
+      
+      // Sync with Honeycomb
+      get().syncWithHoneycomb()
+    }
+  },
+
   // Actions
   setPlayer: (player) => set({ player }),
 
   updatePlayer: (updates) => {
     const { player } = get()
     if (player) {
-      set({ player: { ...player, ...updates } })
+      const updatedPlayer = { ...player, ...updates }
+      set({ player: updatedPlayer })
+      
+      // Save to localStorage
+      localStorage.setItem(`player_${player.walletAddress}`, JSON.stringify(updatedPlayer))
     }
   },
 
   addArtifact: (artifact) => {
     const { player } = get()
     if (player) {
-      set({ 
-        player: { 
-          ...player, 
-          artifacts: [...player.artifacts, artifact] 
-        } 
-      })
+      const updatedPlayer = { 
+        ...player, 
+        artifacts: [...player.artifacts, artifact] 
+      }
+      set({ player: updatedPlayer })
+      
+      // Save to localStorage
+      localStorage.setItem(`player_${player.walletAddress}`, JSON.stringify(updatedPlayer))
+      
+      // Add to marketplace for demo purposes
+      const currentMarketplace = get().marketplace
+      set({ marketplace: [...currentMarketplace, artifact] })
     }
   },
 
   removeArtifact: (artifactId) => {
     const { player } = get()
     if (player) {
-      set({ 
-        player: { 
-          ...player, 
-          artifacts: player.artifacts.filter(a => a.id !== artifactId) 
-        } 
-      })
+      const updatedPlayer = { 
+        ...player, 
+        artifacts: player.artifacts.filter(a => a.id !== artifactId) 
+      }
+      set({ player: updatedPlayer })
+      
+      // Save to localStorage
+      localStorage.setItem(`player_${player.walletAddress}`, JSON.stringify(updatedPlayer))
     }
   },
 
@@ -103,6 +195,22 @@ const useGameStore = create<GameStore>((set, get) => ({
     if (success && artifact && player) {
       // Add artifact to player inventory
       get().addArtifact(artifact)
+      
+      // Update player experience
+      const experienceGain = artifact.rarity === 'legendary' ? 100 :
+                             artifact.rarity === 'epic' ? 50 :
+                             artifact.rarity === 'rare' ? 25 :
+                             artifact.rarity === 'uncommon' ? 10 : 5
+      
+      const newExperience = player.experience + experienceGain
+      const newLevel = Math.floor(newExperience / 100) + 1
+      const experienceToNext = newLevel * 100
+      
+      get().updatePlayer({
+        experience: newExperience,
+        level: newLevel,
+        experienceToNext: experienceToNext
+      })
       
       // Update mission progress
       if (currentMission) {
@@ -162,14 +270,16 @@ const useGameStore = create<GameStore>((set, get) => ({
   updateMission: (missionId, updates) => {
     const { player } = get()
     if (player) {
-      set({
-        player: {
-          ...player,
-          missions: player.missions.map(m => 
-            m.id === missionId ? { ...m, ...updates } : m
-          )
-        }
-      })
+      const updatedPlayer = {
+        ...player,
+        missions: player.missions.map(m => 
+          m.id === missionId ? { ...m, ...updates } : m
+        )
+      }
+      set({ player: updatedPlayer })
+      
+      // Save to localStorage
+      localStorage.setItem(`player_${player.walletAddress}`, JSON.stringify(updatedPlayer))
     }
   },
 
@@ -197,14 +307,16 @@ const useGameStore = create<GameStore>((set, get) => ({
   updateTrait: (traitId, updates) => {
     const { player } = get()
     if (player) {
-      set({
-        player: {
-          ...player,
-          traits: player.traits.map(t => 
-            t.id === traitId ? { ...t, ...updates } : t
-          )
-        }
-      })
+      const updatedPlayer = {
+        ...player,
+        traits: player.traits.map(t => 
+          t.id === traitId ? { ...t, ...updates } : t
+        )
+      }
+      set({ player: updatedPlayer })
+      
+      // Save to localStorage
+      localStorage.setItem(`player_${player.walletAddress}`, JSON.stringify(updatedPlayer))
     }
   },
 
@@ -244,6 +356,24 @@ const GameContext = createContext<ReturnType<typeof useGameStore> | null>(null)
 
 export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const store = useGameStore()
+  
+  // Load player data from localStorage on mount
+  useEffect(() => {
+    const loadPlayerData = () => {
+      const keys = Object.keys(localStorage)
+      const playerKeys = keys.filter(key => key.startsWith('player_'))
+      
+      if (playerKeys.length > 0) {
+        const playerData = JSON.parse(localStorage.getItem(playerKeys[0]) || '{}')
+        if (playerData.walletAddress) {
+          store.setPlayer(playerData)
+        }
+      }
+    }
+    
+    loadPlayerData()
+  }, [store])
+  
   return (
     <GameContext.Provider value={store}>
       {children}

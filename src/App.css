@@ -18,73 +18,92 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #f8b54d, #e36a05);
+  background: rgba(139, 69, 19, 0.5);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #f59e20, #bc5208);
+  background: rgba(139, 69, 19, 0.7);
 }
 
 /* Game-specific animations */
 @keyframes sparkle {
-  0%, 100% { opacity: 0; transform: scale(0); }
-  50% { opacity: 1; transform: scale(1); }
-}
-
-.sparkle {
-  animation: sparkle 2s ease-in-out infinite;
+  0%, 100% { opacity: 0; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
 }
 
 @keyframes brewing {
   0% { transform: rotate(0deg); }
-  25% { transform: rotate(5deg); }
-  75% { transform: rotate(-5deg); }
-  100% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.brewing {
-  animation: brewing 3s ease-in-out infinite;
+/* Element hover effects */
+.element-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(139, 69, 19, 0.3);
 }
 
-/* Element effects */
-.element-fire:hover {
-  box-shadow: 0 0 20px rgba(255, 68, 68, 0.6);
-}
-
-.element-water:hover {
-  box-shadow: 0 0 20px rgba(68, 68, 255, 0.6);
-}
-
-.element-earth:hover {
-  box-shadow: 0 0 20px rgba(68, 255, 68, 0.6);
-}
-
-.element-air:hover {
-  box-shadow: 0 0 20px rgba(255, 255, 68, 0.6);
-}
-
-/* Crafting effects */
+/* Crafting animations */
 .crafting-success {
-  animation: success-pulse 1s ease-in-out;
-}
-
-@keyframes success-pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+  animation: sparkle 0.6s ease-in-out;
 }
 
 .crafting-failure {
-  animation: failure-shake 0.5s ease-in-out;
+  animation: shake 0.5s ease-in-out;
 }
 
-@keyframes failure-shake {
+@keyframes shake {
   0%, 100% { transform: translateX(0); }
   25% { transform: translateX(-5px); }
   75% { transform: translateX(5px); }
+}
+
+/* Wallet dropdown z-index fix */
+.wallet-adapter-button {
+  z-index: 1000 !important;
+}
+
+.wallet-adapter-modal {
+  z-index: 9999 !important;
+}
+
+.wallet-adapter-modal-wrapper {
+  z-index: 9999 !important;
+}
+
+.wallet-adapter-dropdown {
+  z-index: 10000 !important;
+}
+
+/* Ensure wallet components are always on top */
+[data-wallet-adapter-button],
+[data-wallet-adapter-modal],
+[data-wallet-adapter-dropdown] {
+  z-index: 10000 !important;
+  position: relative;
+}
+
+/* Fix for any wallet adapter components */
+.wallet-adapter-react-ui {
+  z-index: 10000 !important;
+}
+
+/* Specific fix for dropdown menu */
+.wallet-adapter-dropdown-list {
+  z-index: 10001 !important;
+  position: absolute !important;
+}
+
+/* Ensure the wallet button and its dropdown are always visible */
+.wallet-adapter-button-trigger {
+  z-index: 1000 !important;
+}
+
+.wallet-adapter-button-dropdown {
+  z-index: 10001 !important;
 } 
