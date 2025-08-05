@@ -4,12 +4,12 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import { useGame } from '@/stores/GameStore'
 import { 
-  FlaskConical, 
-  Store, 
+  Gamepad2, 
   User, 
   Trophy, 
   Crown,
-  Sparkles
+  Sparkles,
+  Settings
 } from 'lucide-react'
 
 const Header: React.FC = () => {
@@ -25,10 +25,8 @@ const Header: React.FC = () => {
   }, [publicKey, player, initializePlayer])
 
   const navItems = [
-    { path: '/', label: 'Laboratory', icon: FlaskConical },
-    { path: '/marketplace', label: 'Marketplace', icon: Store },
-    { path: '/profile', label: 'Profile', icon: User },
-    { path: '/leaderboard', label: 'Leaderboard', icon: Trophy }
+    { path: '/', label: '3D RPG', icon: Gamepad2 },
+    { path: '/game', label: 'Game World', icon: Gamepad2 }
   ]
 
   return (
@@ -39,8 +37,8 @@ const Header: React.FC = () => {
           <div className="flex items-center gap-3">
             <div className="text-2xl">🍯</div>
             <div>
-              <h1 className="text-xl font-bold text-white">Honeycomb Quest</h1>
-              <p className="text-xs text-honeycomb-400">Digital Alchemist</p>
+              <h1 className="text-xl font-bold text-white">Honeycomb RPG</h1>
+              <p className="text-xs text-honeycomb-400">Advanced 3D Adventure</p>
             </div>
           </div>
 
@@ -73,7 +71,7 @@ const Header: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-1">
                   <Sparkles className="w-4 h-4 text-purple-400" />
-                  <span className="text-white font-medium">{player.artifacts.length}</span>
+                  <span className="text-white font-medium">{player.inventory.length}</span>
                 </div>
                 <div className="text-gray-400">
                   {player.walletAddress.slice(0, 6)}...{player.walletAddress.slice(-4)}

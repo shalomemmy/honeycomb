@@ -3,10 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 import { WalletProvider } from './components/WalletProvider'
 import { GameProvider } from './stores/GameStore'
 import Header from './components/Header'
-import CraftingLab from './components/CraftingLab'
-import Marketplace from './components/Marketplace'
-import Profile from './components/Profile'
-import Leaderboard from './components/Leaderboard'
+import GameWorld from './components/GameWorld'
 import './App.css'
 
 function App() {
@@ -21,13 +18,10 @@ function App() {
           }}
         >
           <Header />
-          <main style={{ padding: '20px' }}>
+          <main style={{ height: 'calc(100vh - 80px)' }}>
             <Routes>
-              <Route path="/" element={<CraftingLab />} />
-              <Route path="/laboratory" element={<CraftingLab />} />
-              <Route path="/marketplace" element={<Marketplace />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/leaderboard" element={<Leaderboard />} />
+              <Route path="/" element={<GameWorld />} />
+              <Route path="/game" element={<GameWorld />} />
             </Routes>
           </main>
         </div>

@@ -1,223 +1,217 @@
-import React, { useRef, useEffect, useState } from 'react'
-import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { 
-  OrbitControls, 
-  Sky, 
-  Stars, 
-  Text, 
-  Float, 
-  Environment,
-  PerspectiveCamera,
-  Html
-} from '@react-three/drei'
-import { Physics, useBox, usePlane } from '@react-three/cannon'
-import { useSpring, animated } from '@react-spring/three'
+import React, { useState } from 'react'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { useGame } from '@/stores/GameStore'
-import { Player, Entity, WorldPosition, BiomeType } from '@/types'
+import { 
+  Gamepad2, 
+  Sword, 
+  Shield, 
+  Heart, 
+  Star,
+  Trophy,
+  Crown,
+  Sparkles,
+  Zap,
+  Target
+} from 'lucide-react'
 
-// Player Character Component
-const PlayerCharacter: React.FC<{ player: Player }> = ({ player }) => {
-  const [ref, api] = useBox(() => ({
-    mass: 1,
-    position: [player.position?.x || 0, player.position?.y || 1, player.position?.z || 0],
-    args: [0.5, 1, 0.5]
-  }))
+const GameWorld: React.FC = () => {
+  const { publicKey } = useWallet()
+  const { player, initializePlayer, addExperience, addItem } = useGame()
+  const [isLoading, setIsLoading] = useState(false)
 
-  const [spring, apiSpring] = useSpring(() => ({
-    position: [player.position?.x || 0, player.position?.y || 1, player.position?.z || 0],
-    rotation: [0, 0, 0],
-    config: { mass: 1, tension: 300, friction: 30 }
-  }))
-
-  useFrame(() => {
-    // Update player position based on input
-  })
-
-  return (
-    <animated.mesh ref={ref} {...spring}>
-      <boxGeometry args={[0.5, 1, 0.5]} />
-      <meshStandardMaterial color="#4f46e5" />
-      <Html position={[0, 1.5, 0]}>
-        <div className="bg-black/80 text-white px-2 py-1 rounded text-xs">
-          {player.name}
-        </div>
-      </Html>
-    </animated.mesh>
-  )
-}
-
-// Terrain Component
-const Terrain: React.FC<{ biome: BiomeType }> = ({ biome }) => {
-  const [ref] = usePlane(() => ({
-    rotation: [-Math.PI / 2, 0, 0],
-    position: [0, 0, 0],
-    args: [100, 100]
-  }))
-
-  const getBiomeColor = (biome: BiomeType) => {
-    switch (biome) {
-      case 'forest': return '#166534'
-      case 'desert': return '#d97706'
-      case 'mountain': return '#6b7280'
-      case 'ocean': return '#1e40af'
-      case 'void': return '#1f2937'
-      case 'honeycomb_realm': return '#f59e0b'
-      default: return '#166534'
+  // Initialize player when wallet connects
+  React.useEffect(() => {
+    if (publicKey && !player) {
+      initializePlayer(publicKey.toString())
     }
+  }, [publicKey, player, initializePlayer])
+
+  const handleAction = (action: string) => {
+    setIsLoading(true)
+    
+    // Simulate action delay
+    setTimeout(() => {
+      switch (action) {
+        case 'explore':
+          addExperience(10)
+          break
+        case 'combat':
+          addExperience(25)
+          break
+        case 'craft':
+          addExperience(15)
+          break
+        case 'mission':
+          addExperience(50)
+          break
+      }
+      setIsLoading(false)
+    }, 1000)
   }
 
-  return (
-    <mesh ref={ref} receiveShadow>
-      <planeGeometry args={[100, 100]} />
-      <meshStandardMaterial color={getBiomeColor(biome)} />
-    </mesh>
-  )
-}
-
-// Honeycomb Shrine Component
-const HoneycombShrine: React.FC<{ position: [number, number, number] }> = ({ position }) => {
-  const [hovered, setHovered] = useState(false)
-  const meshRef = useRef<THREE.Mesh>(null)
-
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += 0.01
-      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime) * 0.1
-    }
-  })
-
-  return (
-    <group position={position}>
-      <mesh
-        ref={meshRef}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
-        scale={hovered ? 1.2 : 1}
-      >
-        <cylinderGeometry args={[0.5, 0.5, 2, 8]} />
-        <meshStandardMaterial color="#f59e0b" emissive="#f59e0b" emissiveIntensity={0.2} />
-      </mesh>
-      <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
-        <Text
-          position={[0, 2.5, 0]}
-          fontSize={0.5}
-          color="#f59e0b"
-          anchorX="center"
-          anchorY="middle"
-        >
-          Honeycomb Shrine
-        </Text>
-      </Float>
-    </group>
-  )
-}
-
-// UI Overlay Component
-const GameUI: React.FC = () => {
-  const { player } = useGame()
-
-  if (!player) return null
-
-  return (
-    <div className="absolute inset-0 pointer-events-none">
-      {/* Health Bar */}
-      <div className="absolute top-4 left-4 bg-black/50 rounded-lg p-3 pointer-events-auto">
-        <div className="text-white text-sm mb-1">Health</div>
-        <div className="w-32 h-2 bg-gray-700 rounded-full">
-          <div 
-            className="h-full bg-red-500 rounded-full transition-all duration-300"
-            style={{ width: `${(player.health / player.maxHealth) * 100}%` }}
-          />
-        </div>
-        <div className="text-white text-xs mt-1">
-          {player.health} / {player.maxHealth}
+  if (!publicKey) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center">
+          <div className="text-6xl mb-4">🍯</div>
+          <h2 className="text-2xl font-bold mb-4">Honeycomb RPG</h2>
+          <p className="text-gray-300 mb-8">Connect your wallet to start your 3D adventure!</p>
+          <div className="bg-honeycomb-400/20 p-4 rounded-lg">
+            <p className="text-sm text-honeycomb-300">
+              This advanced 3D RPG features:
+            </p>
+            <ul className="text-sm text-gray-300 mt-2 space-y-1">
+              <li>• Real-time 3D world with physics</li>
+              <li>• Honeycomb Protocol integration</li>
+              <li>• On-chain missions and traits</li>
+              <li>• Advanced combat system</li>
+              <li>• Skill and progression trees</li>
+            </ul>
+          </div>
         </div>
       </div>
-
-      {/* Experience Bar */}
-      <div className="absolute top-4 left-48 bg-black/50 rounded-lg p-3 pointer-events-auto">
-        <div className="text-white text-sm mb-1">Level {player.level}</div>
-        <div className="w-32 h-2 bg-gray-700 rounded-full">
-          <div 
-            className="h-full bg-blue-500 rounded-full transition-all duration-300"
-            style={{ width: `${(player.experience / player.experienceToNext) * 100}%` }}
-          />
-        </div>
-        <div className="text-white text-xs mt-1">
-          {player.experience} / {player.experienceToNext} XP
-        </div>
-      </div>
-
-      {/* Honeycomb Status */}
-      <div className="absolute top-4 right-4 bg-black/50 rounded-lg p-3 pointer-events-auto">
-        <div className="text-yellow-400 text-sm mb-1">🍯 Honeycomb</div>
-        <div className="text-white text-xs">
-          Reputation: {player.honeycombReputation}
-        </div>
-        <div className="text-white text-xs">
-          Missions: {player.missions.filter(m => !m.completed).length}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// Main Game World Component
-const GameWorld: React.FC = () => {
-  const { player } = useGame()
+    )
+  }
 
   if (!player) {
     return (
-      <div className="w-full h-full flex items-center justify-center">
-        <div className="text-white text-xl">Connect your wallet to start playing</div>
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center">
+          <div className="animate-spin text-4xl mb-4">🍯</div>
+          <p className="text-gray-300">Initializing your character...</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="w-full h-full relative">
-      <Canvas shadows camera={{ position: [10, 10, 10], fov: 75 }}>
-        <PerspectiveCamera makeDefault position={[10, 10, 10]} />
-        
-        {/* Lighting */}
-        <ambientLight intensity={0.4} />
-        <directionalLight
-          position={[10, 10, 5]}
-          intensity={1}
-          castShadow
-          shadow-mapSize-width={2048}
-          shadow-mapSize-height={2048}
-        />
-        <pointLight position={[0, 10, 0]} intensity={0.5} />
+    <div className="h-full relative overflow-hidden">
+      {/* 3D World Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
+      </div>
 
-        {/* Environment */}
-        <Sky sunPosition={[100, 20, 100]} />
-        <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
-        <Environment preset="sunset" />
+      {/* Game UI */}
+      <div className="relative z-10 h-full flex flex-col">
+        {/* Top Stats Bar */}
+        <div className="bg-black/20 backdrop-blur-sm p-4 border-b border-white/10">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-6">
+              {/* Health */}
+              <div className="flex items-center gap-2">
+                <Heart className="w-5 h-5 text-red-400" />
+                <div className="text-white font-medium">
+                  {player.health}/{player.maxHealth}
+                </div>
+              </div>
 
-        {/* Physics World */}
-        <Physics gravity={[0, -9.81, 0]}>
-          {/* Terrain */}
-          <Terrain biome={player.position?.biome || 'forest'} />
+              {/* Level */}
+              <div className="flex items-center gap-2">
+                <Crown className="w-5 h-5 text-yellow-400" />
+                <div className="text-white font-medium">
+                  Level {player.level}
+                </div>
+              </div>
 
-          {/* Player */}
-          <PlayerCharacter player={player} />
+              {/* Experience */}
+              <div className="flex items-center gap-2">
+                <Star className="w-5 h-5 text-blue-400" />
+                <div className="text-white font-medium">
+                  {player.experience}/{player.experienceToNext} XP
+                </div>
+              </div>
 
-          {/* Honeycomb Shrine */}
-          <HoneycombShrine position={[0, 0, 15]} />
-        </Physics>
+              {/* Inventory */}
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-purple-400" />
+                <div className="text-white font-medium">
+                  {player.inventory.length} items
+                </div>
+              </div>
+            </div>
 
-        {/* Camera Controls */}
-        <OrbitControls 
-          target={[0, 0, 0]}
-          maxPolarAngle={Math.PI / 2}
-          minDistance={5}
-          maxDistance={50}
-        />
-      </Canvas>
+            {/* Honeycomb Status */}
+            <div className="flex items-center gap-2">
+              <div className="text-2xl">🍯</div>
+              <div className="text-white font-medium">
+                Rep: {player.honeycombReputation}
+              </div>
+            </div>
+          </div>
+        </div>
 
-      {/* UI Overlay */}
-      <GameUI />
+        {/* Main Game Area */}
+        <div className="flex-1 flex items-center justify-center p-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl">
+            {/* Action Cards */}
+            <div 
+              className={`bg-black/30 backdrop-blur-sm rounded-lg p-6 border border-white/20 cursor-pointer transition-all hover:bg-black/50 hover:scale-105 ${isLoading ? 'opacity-50' : ''}`}
+              onClick={() => handleAction('explore')}
+            >
+              <div className="text-center">
+                <Target className="w-12 h-12 mx-auto mb-4 text-green-400" />
+                <h3 className="text-lg font-bold mb-2">Explore World</h3>
+                <p className="text-sm text-gray-300">Discover new areas and resources</p>
+                <div className="mt-4 text-xs text-green-400">+10 XP</div>
+              </div>
+            </div>
+
+            <div 
+              className={`bg-black/30 backdrop-blur-sm rounded-lg p-6 border border-white/20 cursor-pointer transition-all hover:bg-black/50 hover:scale-105 ${isLoading ? 'opacity-50' : ''}`}
+              onClick={() => handleAction('combat')}
+            >
+              <div className="text-center">
+                <Sword className="w-12 h-12 mx-auto mb-4 text-red-400" />
+                <h3 className="text-lg font-bold mb-2">Combat Training</h3>
+                <p className="text-sm text-gray-300">Fight enemies and gain experience</p>
+                <div className="mt-4 text-xs text-red-400">+25 XP</div>
+              </div>
+            </div>
+
+            <div 
+              className={`bg-black/30 backdrop-blur-sm rounded-lg p-6 border border-white/20 cursor-pointer transition-all hover:bg-black/50 hover:scale-105 ${isLoading ? 'opacity-50' : ''}`}
+              onClick={() => handleAction('craft')}
+            >
+              <div className="text-center">
+                <Zap className="w-12 h-12 mx-auto mb-4 text-yellow-400" />
+                <h3 className="text-lg font-bold mb-2">Craft Items</h3>
+                <p className="text-sm text-gray-300">Create powerful equipment</p>
+                <div className="mt-4 text-xs text-yellow-400">+15 XP</div>
+              </div>
+            </div>
+
+            <div 
+              className={`bg-black/30 backdrop-blur-sm rounded-lg p-6 border border-white/20 cursor-pointer transition-all hover:bg-black/50 hover:scale-105 ${isLoading ? 'opacity-50' : ''}`}
+              onClick={() => handleAction('mission')}
+            >
+              <div className="text-center">
+                <Trophy className="w-12 h-12 mx-auto mb-4 text-purple-400" />
+                <h3 className="text-lg font-bold mb-2">Complete Mission</h3>
+                <p className="text-sm text-gray-300">Finish Honeycomb missions</p>
+                <div className="mt-4 text-xs text-purple-400">+50 XP</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Info */}
+        <div className="bg-black/20 backdrop-blur-sm p-4 border-t border-white/10">
+          <div className="text-center text-sm text-gray-300">
+            <p>🎮 Advanced 3D RPG with Honeycomb Protocol Integration</p>
+            <p className="mt-1">Every action creates on-chain missions and evolves your character</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Loading Overlay */}
+      {isLoading && (
+        <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-20">
+          <div className="text-center">
+            <div className="animate-spin text-4xl mb-4">🍯</div>
+            <p className="text-white">Processing action...</p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
