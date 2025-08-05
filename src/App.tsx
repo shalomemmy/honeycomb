@@ -4,6 +4,7 @@ import { WalletProvider } from './components/WalletProvider'
 import { GameProvider } from './stores/GameStore'
 import Header from './components/Header'
 import GameWorld from './components/GameWorld'
+import WalletTest from './components/WalletTest'
 import './App.css'
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
             <Routes>
               <Route path="/" element={<GameWorld />} />
               <Route path="/game" element={<GameWorld />} />
+              <Route path="/test" element={<WalletTest />} />
             </Routes>
           </main>
         </div>
