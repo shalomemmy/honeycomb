@@ -376,17 +376,21 @@ class HoneycombService {
         const blockchainTx: BlockchainTransaction = {
           id: signature,
           type: transaction.type || 'honeycomb_verification',
-        data: transaction.data || {},
-        status: 'confirmed',
-        txHash: signature,
-        blockNumber: Date.now(),
-        timestamp: new Date()
-      }
+          data: transaction.data || {},
+          status: 'confirmed',
+          txHash: signature,
+          blockNumber: Date.now(),
+          timestamp: new Date()
+        }
 
-      // Store transaction
-      localStorage.setItem(`tx_${blockchainTx.id}`, JSON.stringify(blockchainTx))
-      
-      return blockchainTx
+        // Store transaction
+        localStorage.setItem(`tx_${blockchainTx.id}`, JSON.stringify(blockchainTx))
+        
+        return blockchainTx
+      } catch (txError) {
+        console.error('Failed to send transaction:', txError)
+        return this.createMockTransaction(transaction)
+      }
     } catch (error) {
       console.error('Failed to create blockchain transaction:', error)
       return this.createMockTransaction(transaction)
