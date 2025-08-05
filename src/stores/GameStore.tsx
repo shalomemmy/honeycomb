@@ -243,14 +243,15 @@ const useGameStore = create<GameStore>((set, get) => ({
 const GameContext = createContext<ReturnType<typeof useGameStore> | null>(null)
 
 export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const store = useGameStore()
   return (
-    <GameContext.Provider value={useGameStore()}>
+    <GameContext.Provider value={store}>
       {children}
     </GameContext.Provider>
   )
 }
 
-export const useGame = () => {
+export const useGame = (): ReturnType<typeof useGameStore> => {
   const context = useContext(GameContext)
   if (!context) {
     throw new Error('useGame must be used within a GameProvider')
