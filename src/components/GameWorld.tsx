@@ -91,13 +91,13 @@ const GameWorld: React.FC = () => {
         <div className="text-center">
           <div className="text-6xl mb-4">🍯</div>
           <h2 className="text-2xl font-bold mb-4">Honeycomb RPG</h2>
-          <p className="text-gray-300 mb-8">Connect your wallet to start your 3D adventure!</p>
+          <p className="text-gray-300 mb-8">Connect your wallet to start your 2D adventure!</p>
           <div className="bg-honeycomb-400/20 p-4 rounded-lg">
             <p className="text-sm text-honeycomb-300">
-              This advanced 3D RPG features:
+              This advanced 2D RPG features:
             </p>
             <ul className="text-sm text-gray-300 mt-2 space-y-1">
-              <li>• Real-time 3D world with physics</li>
+              <li>• Real-time 2D world with physics</li>
               <li>• Honeycomb Protocol integration</li>
               <li>• On-chain missions and traits</li>
               <li>• Advanced combat system</li>
@@ -113,7 +113,7 @@ const GameWorld: React.FC = () => {
 
   return (
     <div className="h-full relative overflow-hidden">
-      {/* 3D World Background */}
+      {/* 2D World Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
         <div className="absolute inset-0 opacity-30" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
@@ -229,7 +229,7 @@ const GameWorld: React.FC = () => {
         {/* Bottom Info */}
         <div className="bg-black/20 backdrop-blur-sm p-4 border-t border-white/10">
           <div className="text-center text-sm text-gray-300">
-            <p>🎮 Advanced 3D RPG with Honeycomb Protocol Integration</p>
+            <p>🎮 Advanced 2D RPG with Honeycomb Protocol Integration</p>
             <p className="mt-1">Every action creates on-chain missions and evolves your character</p>
           </div>
         </div>

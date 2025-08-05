@@ -23,7 +23,7 @@ const Header: React.FC<HeaderProps> = ({ connectedWallet, onConnectWallet, onDis
   const location = useLocation()
 
   const navItems = [
-    { path: '/', label: '3D RPG', icon: Gamepad2 },
+    { path: '/', label: '2D RPG', icon: Gamepad2 },
     { path: '/game', label: 'Game World', icon: Gamepad2 }
   ]
 
@@ -36,7 +36,7 @@ const Header: React.FC<HeaderProps> = ({ connectedWallet, onConnectWallet, onDis
             <div className="text-2xl">🍯</div>
             <div>
               <h1 className="text-xl font-bold text-white">Honeycomb RPG</h1>
-              <p className="text-xs text-honeycomb-400">Advanced 3D Adventure</p>
+              <p className="text-xs text-honeycomb-400">Advanced 2D Adventure</p>
             </div>
           </div>
 

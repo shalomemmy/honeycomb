@@ -10,7 +10,7 @@ export type MissionType = 'daily' | 'weekly' | 'achievement' | 'story' | 'guild'
 export type SkillType = 'combat' | 'crafting' | 'exploration' | 'social' | 'blockchain'
 export type BiomeType = 'forest' | 'desert' | 'mountain' | 'ocean' | 'void' | 'honeycomb_realm'
 
-// 3D World Types
+// 2D World Types
 export interface Vector3 {
   x: number
   y: number
