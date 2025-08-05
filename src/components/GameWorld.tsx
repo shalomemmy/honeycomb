@@ -72,6 +72,10 @@ const GameWorld: React.FC = () => {
         if (success) {
           addExperience(50)
           console.log('✅ Honeycomb mission completed successfully!')
+        } else {
+          // Still give XP even if blockchain transaction failed
+          addExperience(50)
+          console.log('⚠️ Mission completed with mock transaction (insufficient SOL or cancelled)')
         }
       }
     } catch (error) {

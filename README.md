@@ -74,11 +74,12 @@ This game implements the **official Honeycomb Protocol architecture** following 
 - **💰 Nectar Staking**: Long-term engagement rewards
 
 #### **Blockchain Features:**
-- **Honeynet RPC**: Uses Honeycomb's test network (`https://rpc.test.honeycombprotocol.com`)
-- **Edge API**: Connects to official Edge Client (`https://edge.test.honeycombprotocol.com/`)
+- **Mainnet RPC**: Uses Honeycomb's production network (`https://rpc.main.honeycombprotocol.com`)
+- **Edge API**: Connects to official Edge Client (`https://edge.main.honeycombprotocol.com/`)
 - **Real Transactions**: Creates actual Solana transactions with Honeycomb metadata
 - **Compressed Data**: Utilizes Honeycomb's 1000x cost reduction compression
 - **Universal Profiles**: Cross-project user identity system
+- **Error Handling**: Graceful fallbacks for insufficient funds or cancelled transactions
 
 ## 🛠 Technical Stack
 
@@ -96,7 +97,7 @@ This game implements the **official Honeycomb Protocol architecture** following 
 - Node.js 18+ 
 - npm or yarn
 - A Solana wallet (Phantom recommended)
-- Some SOL for transaction fees (devnet SOL is free)
+- **Mainnet SOL** for transaction fees (~0.001 SOL required)
 
 ### Installation
 
